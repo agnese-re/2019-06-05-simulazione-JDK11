@@ -1,6 +1,5 @@
 package it.polito.tdp.crimes.db;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,9 +9,27 @@ import java.util.List;
 
 import it.polito.tdp.crimes.model.Event;
 
-
-
 public class EventsDao {
+	
+	public List<Integer> getAnni() {
+		String sql = "SELECT DISTINCT(YEAR(events.reported_date)) AS anno "
+				+ "FROM events " 
+				+ "ORDER BY YEAR(events.reported_date)";
+		List<Integer> result = new ArrayList<Integer>();
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next())
+				result.add(rs.getInt("anno"));
+		
+			conn.close();
+			return result;
+		} catch(SQLException sqle) {
+			throw new RuntimeException("Errore nella query SQL", sqle);
+		}
+	}
 	
 	public List<Event> listAllEvents(){
 		String sql = "SELECT * FROM events" ;
